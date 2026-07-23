@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Hiwar - Mahir Bahasa Arab dengan AI</title>
+    <!-- Tailwind CSS (via CDN for static hosting) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#115e59', // teal-800
+                        secondary: '#14b8a6', // teal-500
+                        accent: '#f59e0b', // amber-500
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .arabic { font-family: 'Amiri', serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(20,184,166,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-secondary selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg text-white font-bold text-2xl">
+                        <i class='bx bx-book-open'></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-primary tracking-tight">Al-Hiwar</h1>
+                        <p class="text-xs text-gray-500 font-medium -mt-1">Pusat Belajar Premium</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="register.html" class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-full text-white bg-primary hover:bg-teal-900 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                        Daftar / Masuk
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg pt-32 pb-20 lg:pt-48 lg:pb-32 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-block py-1 px-3 rounded-full bg-teal-100 text-teal-800 text-sm font-semibold mb-6 shadow-sm border border-teal-200">
+                    ✨ Ditenagai oleh AI Generatif Terbaru
+                </span>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-8">
+                    Fasih Berbahasa Arab Kini <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Lebih Mudah & Menyenangkan</span>
+                </h2>
+                <p class="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed">
+                    Tingkatkan kemampuan bahasa Arab Anda langsung dari genggaman. Berlatih percakapan langsung dengan <b>Tutor AI interaktif</b>, kapan saja dan di mana saja.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#harga" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-gradient-to-r from-primary to-secondary hover:from-teal-900 hover:to-primary shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                        Berlangganan Sekarang
+                        <i class='bx bx-right-arrow-alt ml-2 text-2xl'></i>
+                    </a>
+                    <a href="#fitur" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-primary bg-white border border-gray-200 hover:border-primary hover:bg-teal-50 shadow-sm transition-all duration-300">
+                        Pelajari Fitur
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="fitur" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-bold text-gray-900 mb-4">Fitur Premium Unggulan</h3>
+                <p class="text-gray-500 max-w-2xl mx-auto">Buka semua kunci batasan dan nikmati pengalaman belajar bahasa Arab tanpa batas.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-3xl p-8 transition-transform duration-300 hover:-translate-y-2 border-t-4 border-primary">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center text-primary text-3xl mb-6">
+                        <i class='bx bx-bot'></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-gray-900">Tutor AI (Speech-to-Speech)</h4>
+                    <p class="text-gray-600">Ngobrol langsung menggunakan suara dengan Ustadz AI dalam 12 tema kehidupan sehari-hari (Pasar, Bandara, dll).</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-3xl p-8 transition-transform duration-300 hover:-translate-y-2 border-t-4 border-accent">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-accent text-3xl mb-6">
+                        <i class='bx bx-book-bookmark'></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-gray-900">12 Tema Kosakata Spesifik</h4>
+                    <p class="text-gray-600">Akses penuh ke semua kartu kosakata interaktif. Dengarkan pelafalan aslinya (Native) untuk setiap kata.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-3xl p-8 transition-transform duration-300 hover:-translate-y-2 border-t-4 border-secondary">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-50 flex items-center justify-center text-secondary text-3xl mb-6">
+                        <i class='bx bx-search-alt'></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-gray-900">Kamus Arab-Indo Tak Terbatas</h4>
+                    <p class="text-gray-600">Cari ribuan kata kapan saja tanpa batas harian pencarian. Sangat berguna saat mengerjakan tugas atau menerjemahkan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="harga" class="py-24 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden bg-white shadow-2xl">
+                <!-- Decorative element -->
+                <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-teal-50 border-[20px] border-teal-100/50"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-3xl font-extrabold text-gray-900 mb-2">Langganan Premium</h3>
+                        <p class="text-gray-500 mb-6">Investasi terbaik untuk masa depan bahasa Arab Anda.</p>
+                        <div class="flex items-end justify-center md:justify-start gap-1 mb-6">
+                            <span class="text-5xl font-black text-primary">Rp37.000</span>
+                            <span class="text-gray-500 font-medium mb-1">/ bulan</span>
+                        </div>
+                        <ul class="space-y-4 text-left">
+                            <li class="flex items-center gap-3">
+                                <i class='bx bxs-check-circle text-2xl text-secondary'></i>
+                                <span class="font-medium text-gray-700">Akses Penuh 12 Tema Tutor AI</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class='bx bxs-check-circle text-2xl text-secondary'></i>
+                                <span class="font-medium text-gray-700">Akses Penuh 12 Tema Kosakata & Dialog</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class='bx bxs-check-circle text-2xl text-secondary'></i>
+                                <span class="font-medium text-gray-700">Kamus Tanpa Batas</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="w-full md:w-auto">
+                        <a href="register.html" class="block w-full text-center px-10 py-5 text-xl font-bold rounded-2xl text-white bg-primary hover:bg-teal-900 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                            Mulai Berlangganan
+                        </a>
+                        <p class="text-sm text-center text-gray-400 mt-4">Pembayaran aman didukung oleh Midtrans (QRIS, VA, E-Wallet).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold text-primary tracking-tight mb-2">Al-Hiwar</h2>
+            <p class="text-gray-500 mb-6 text-sm">Aplikasi Belajar Bahasa Arab Terlengkap dengan AI.</p>
+            <p class="text-gray-400 text-sm">© 2026 Al-Hiwar. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 export const config = {
     runtime: 'edge',
 };
@@ -13,7 +11,7 @@ export default async function handler(req) {
         const payload = await req.json();
         
         // Cek status transaksi dari Midtrans
-        const { transaction_status, custom_field1, order_id } = payload;
+        const { transaction_status, custom_field1 } = payload;
         
         // custom_field1 berisi userId Supabase yang kita kirim saat membuat token
         const userId = custom_field1;
@@ -24,7 +22,6 @@ export default async function handler(req) {
                 return new Response(JSON.stringify({ error: 'UserID tidak ditemukan di custom_field1' }), { status: 400 });
             }
 
-            // Inisialisasi Supabase menggunakan Service Role Key (Bypass RLS)
             const supabaseUrl = 'https://cjwufugmuhzbvmbixjyx.supabase.co';
             const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
             
@@ -32,19 +29,26 @@ export default async function handler(req) {
                 return new Response(JSON.stringify({ error: 'SUPABASE_SERVICE_ROLE_KEY belum disetel di Vercel' }), { status: 500 });
             }
 
-            const supabase = createClient(supabaseUrl, supabaseServiceKey);
+            // Update status premium menggunakan standar REST API (tanpa dependensi NPM)
+            const updatePayload = {
+                is_premium: true,
+                subscription_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Aktif 30 Hari
+            };
 
-            // Update status premium di database
-            const { error } = await supabase
-                .from('users_premium')
-                .update({ 
-                    is_premium: true,
-                    subscription_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Aktif 30 Hari
-                })
-                .eq('id', userId);
+            const response = await fetch(`${supabaseUrl}/rest/v1/users_premium?id=eq.${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': supabaseServiceKey,
+                    'Authorization': `Bearer ${supabaseServiceKey}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(updatePayload)
+            });
 
-            if (error) {
-                console.error("Gagal update Supabase:", error);
+            if (!response.ok) {
+                const errData = await response.text();
+                console.error("Gagal update Supabase:", errData);
                 return new Response(JSON.stringify({ error: 'Gagal update database' }), { status: 500 });
             }
 

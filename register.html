@@ -114,58 +114,68 @@
             alertBox.classList.add('hidden');
         }
 
-        function showAlert(msg, isError = true) {
-            alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-green-50', 'text-green-700', 'border-green-200');
-            if (isError) {
-                alertBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
-                alertBox.innerHTML = `<i class='bx bx-error-circle mr-1'></i> ${msg}`;
-            } else {
-                alertBox.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
-                alertBox.innerHTML = `<i class='bx bx-check-circle mr-1'></i> ${msg}`;
-            }
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Loading state
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-70');
-            loadingSpinner.classList.remove('hidden');
-
-            try {
-                if (isLoginMode) {
-                    // PROSES LOGIN
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // PROSES DAFTAR
-                    const { data, error } = await supabase.auth.signUp({ email, password });
-                    if (error) throw error;
-                    
-                    if (data.user && data.user.identities && data.user.identities.length === 0) {
-                        showAlert('Email sudah terdaftar. Silakan login.');
-                    } else {
-                        // Tambahkan ke tabel users_premium (meskipun secara default is_premium false)
-                        await supabase.from('users_premium').insert([
-                            { id: data.user.id, email: email, is_premium: false }
-                        ]);
-                        showAlert('Pendaftaran Berhasil! Mengalihkan...', false);
-                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
-                    }
-                }
-            } catch (error) {
-                showAlert(error.message === 'Invalid login credentials' ? 'Email atau kata sandi salah.' : error.message);
-            } finally {
-                // Reset loading
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-70');
-                loadingSpinner.classList.add('hidden');
-            }
-        });
+          function showAlert(msg, isError = true) {
+              alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-green-50', 'text-green-700', 'border-green-200');
+              if (isError) {
+                  alertBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+                  alertBox.innerHTML = `<i class='bx bx-error-circle mr-1'></i> ${msg}`;
+              } else {
+                  alertBox.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
+                  alertBox.innerHTML = `<i class='bx bx-check-circle mr-1'></i> ${msg}`;
+              }
+          }
+  
+          form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const email = document.getElementById('email').value;
+              const password = document.getElementById('password').value;
+  
+              // Loading state
+              submitBtn.disabled = true;
+              submitBtn.classList.add('opacity-70');
+              loadingSpinner.classList.remove('hidden');
+  
+              try {
+                  if (isLoginMode) {
+                      // PROSES LOGIN
+                      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                      if (error) throw error;
+                      window.location.href = 'dashboard.html';
+                  } else {
+                      // PROSES DAFTAR
+                      const { data, error } = await supabase.auth.signUp({ email, password });
+                      if (error) throw error;
+                      
+                      if (data.user && data.user.identities && data.user.identities.length === 0) {
+                          showAlert('Email sudah terdaftar. Silakan login.');
+                      } else {
+                          // Cek apakah email butuh konfirmasi
+                          if (data.session === null) {
+                              showAlert('Pendaftaran Berhasil! Silakan cek email Anda untuk konfirmasi.', false);
+                          } else {
+                              try {
+                                  // Tambahkan ke tabel users_premium jika session sudah ada (gak butuh konfirmasi email)
+                                  await supabase.from('users_premium').insert([
+                                      { id: data.user.id, email: email, is_premium: false }
+                                  ]);
+                              } catch(e) {
+                                  console.log("Gagal insert ke users_premium (mungkin sudah ada atau RLS):", e);
+                              }
+                              showAlert('Pendaftaran Berhasil! Mengalihkan...', false);
+                              setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+                          }
+                      }
+                  }
+              } catch (error) {
+                  console.error("Auth Error:", error);
+                  showAlert(error.message === 'Invalid login credentials' ? 'Email atau kata sandi salah.' : error.message);
+              } finally {
+                  // Reset loading
+                  submitBtn.disabled = false;
+                  submitBtn.classList.remove('opacity-70');
+                  loadingSpinner.classList.add('hidden');
+              }
+          });
     </script>
 </body>
 </html>

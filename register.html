@@ -103,15 +103,15 @@
         const submitText = document.getElementById('submit-text');
 
         // Cek apakah user sudah login sebelumnya
-        async function checkSession() {
-            if (!supabase) return;
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    window.location.href = 'dashboard.html';
-                }
-            } catch(e) {
-                console.error("Session check error:", e);
+        function checkSession() {
+            if (supabase) {
+                supabase.auth.getSession().then(function(result) {
+                    if (result.data.session) {
+                        window.location.href = 'dashboard.html';
+                    }
+                }).catch(function(err) {
+                    console.error("Gagal cek sesi:", err);
+                });
             }
         }
         checkSession();
@@ -137,7 +137,7 @@
               }
           }
   
-          form.addEventListener('submit', async (e) => {
+          form.addEventListener('submit', function(e) {
               e.preventDefault();
               if (!supabase) {
                   showAlert('Gagal terhubung ke server (Sistem Keamanan / AdBlocker mungkin aktif).');
@@ -152,45 +152,63 @@
               submitBtn.classList.add('opacity-70');
               loadingSpinner.classList.remove('hidden');
   
-              try {
-                  if (isLoginMode) {
-                      // PROSES LOGIN
-                      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                      if (error) throw error;
-                      window.location.href = 'dashboard.html';
-                  } else {
-                      // PROSES DAFTAR
-                      const { data, error } = await supabase.auth.signUp({ email, password });
-                      if (error) throw error;
-                      
-                      if (data.user && data.user.identities && data.user.identities.length === 0) {
-                          showAlert('Email sudah terdaftar. Silakan login.');
-                      } else {
-                          // Cek apakah email butuh konfirmasi
-                          if (data.session === null) {
-                              showAlert('Pendaftaran Berhasil! Silakan cek email Anda untuk konfirmasi.', false);
+              if (isLoginMode) {
+                  // PROSES LOGIN
+                  supabase.auth.signInWithPassword({ email: email, password: password })
+                      .then(function(result) {
+                          if (result.error) throw result.error;
+                          window.location.href = 'dashboard.html';
+                      })
+                      .catch(function(error) {
+                          console.error("Auth Error:", error);
+                          showAlert(error.message === 'Invalid login credentials' ? 'Email atau kata sandi salah.' : error.message);
+                      })
+                      .finally(function() {
+                          submitBtn.disabled = false;
+                          submitBtn.classList.remove('opacity-70');
+                          loadingSpinner.classList.add('hidden');
+                      });
+              } else {
+                  // PROSES DAFTAR
+                  supabase.auth.signUp({ email: email, password: password })
+                      .then(function(result) {
+                          if (result.error) throw result.error;
+                          const data = result.data;
+                          
+                          if (data.user && data.user.identities && data.user.identities.length === 0) {
+                              showAlert('Email sudah terdaftar. Silakan login.');
+                              submitBtn.disabled = false;
+                              submitBtn.classList.remove('opacity-70');
+                              loadingSpinner.classList.add('hidden');
                           } else {
-                              try {
-                                  // Tambahkan ke tabel users_premium jika session sudah ada (gak butuh konfirmasi email)
-                                  await supabase.from('users_premium').insert([
+                              // Cek apakah email butuh konfirmasi
+                              if (data.session === null) {
+                                  showAlert('Pendaftaran Berhasil! Silakan cek email Anda untuk konfirmasi.', false);
+                                  submitBtn.disabled = false;
+                                  submitBtn.classList.remove('opacity-70');
+                                  loadingSpinner.classList.add('hidden');
+                              } else {
+                                  // Tambahkan ke tabel users_premium jika session sudah ada
+                                  supabase.from('users_premium').insert([
                                       { id: data.user.id, email: email, is_premium: false }
-                                  ]);
-                              } catch(e) {
-                                  console.log("Gagal insert ke users_premium (mungkin sudah ada atau RLS):", e);
+                                  ]).then(function() {
+                                      showAlert('Pendaftaran Berhasil! Mengalihkan...', false);
+                                      setTimeout(function() { window.location.href = 'dashboard.html'; }, 1500);
+                                  }).catch(function(e) {
+                                      console.log("Gagal insert ke users_premium (mungkin sudah ada atau RLS):", e);
+                                      showAlert('Pendaftaran Berhasil! Mengalihkan...', false);
+                                      setTimeout(function() { window.location.href = 'dashboard.html'; }, 1500);
+                                  });
                               }
-                              showAlert('Pendaftaran Berhasil! Mengalihkan...', false);
-                              setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
                           }
-                      }
-                  }
-              } catch (error) {
-                  console.error("Auth Error:", error);
-                  showAlert(error.message === 'Invalid login credentials' ? 'Email atau kata sandi salah.' : error.message);
-              } finally {
-                  // Reset loading
-                  submitBtn.disabled = false;
-                  submitBtn.classList.remove('opacity-70');
-                  loadingSpinner.classList.add('hidden');
+                      })
+                      .catch(function(error) {
+                          console.error("Auth Error:", error);
+                          showAlert(error.message === 'Invalid login credentials' ? 'Email atau kata sandi salah.' : error.message);
+                          submitBtn.disabled = false;
+                          submitBtn.classList.remove('opacity-70');
+                          loadingSpinner.classList.add('hidden');
+                      });
               }
           });
     </script>
